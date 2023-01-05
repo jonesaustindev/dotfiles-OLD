@@ -48,7 +48,7 @@ require('packer').startup(function(use)
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
-  use { "catppuccin/nvim", as = "catppuccin" }
+  use 'EdenEast/nightfox.nvim' -- theme
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
@@ -72,6 +72,9 @@ require('packer').startup(function(use)
 
   -- Auto pairs
   use 'windwp/nvim-autopairs'
+
+  -- Nvim tree
+  use { 'nvim-tree/nvim-tree.lua', requires = { 'nvim-tree/nvim-web-devicons' } }
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -133,7 +136,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd.colorscheme "catppuccin"
+vim.cmd.colorscheme "nightfox"
 vim.o.cursorline = true
 
 -- Set completeopt to have a better completion experience
@@ -141,6 +144,9 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- Relative line numbers
 vim.o.relativenumber = true
+
+-- Use clipboard for yank, delete, etc
+vim.o.clipboard = 'unnamedplus'
 
 -- [[ Basic Keymaps ]]
 -- Set <space> as the leader key
@@ -183,7 +189,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = 'catppuccin',
+    theme = 'nightfox',
     component_separators = '|',
     section_separators = '',
   },
@@ -195,22 +201,11 @@ require('Comment').setup()
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
 require('indent_blankline').setup {
-  char = '┊',
   show_trailing_blankline_indent = false,
 }
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
--- DEFAULT
--- require('gitsigns').setup {
---   signs = {
---     add = { text = '+' },
---     change = { text = '~' },
---     delete = { text = '_' },
---     topdelete = { text = '‾' },
---     changedelete = { text = '~' },
---   },
--- }
 require('gitsigns').setup {
   signs = {
     add          = { hl = 'GitSignsAdd'   , text = '│', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'    },
@@ -274,7 +269,7 @@ require('gitsigns').setup {
       return '<Ignore>'
     end, {expr=true})
 
-    -- Actions
+    -- Git Actions
     map({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>')
     map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>')
     map('n', '<leader>hS', gs.stage_buffer)
@@ -586,47 +581,43 @@ null_ls.setup({
   end,
 })
 
--- Catppuccin setup
-require("catppuccin").setup({
-    flavour = "mocha", -- latte, frappe, macchiato, mocha
-    background = { -- :h background
-        light = "latte",
-        dark = "mocha",
+-- Auto pairs
+require("nvim-autopairs").setup {}
+
+-- Nightfox setup
+require('nightfox').setup({
+  options = {
+    -- Compiled file's destination location
+    compile_path = vim.fn.stdpath("cache") .. "/nightfox",
+    compile_file_suffix = "_compiled", -- Compiled file suffix
+    transparent = true,    -- Disable setting background
+    terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+    dim_inactive = false,   -- Non focused panes set to alternative background
+    module_default = true,  -- Default enable value for modules
+    styles = {              -- Style to be applied to different syntax groups
+      comments = "NONE",    -- Value is any valid attr-list value `:help attr-list`
+      conditionals = "NONE",
+      constants = "NONE",
+      functions = "NONE",
+      keywords = "NONE",
+      numbers = "NONE",
+      operators = "NONE",
+      strings = "NONE",
+      types = "NONE",
+      variables = "NONE",
     },
-    transparent_background = true,
-    term_colors = false,
-    dim_inactive = {
-        enabled = false,
-        shade = "dark",
-        percentage = 0.15,
+    inverse = {             -- Inverse highlight for different types
+      match_paren = false,
+      visual = false,
+      search = false,
     },
-    no_italic = false, -- Force no italic
-    no_bold = false, -- Force no bold
-    styles = {
-        comments = { "italic" },
-        conditionals = { "italic" },
-        loops = {},
-        functions = {},
-        keywords = {},
-        strings = {},
-        variables = {},
-        numbers = {},
-        booleans = {},
-        properties = {},
-        types = {},
-        operators = {},
+    modules = {             -- List of various plugins and additional options
+      -- ...
     },
-    color_overrides = {},
-    custom_highlights = {},
-    integrations = {
-        cmp = true,
-        gitsigns = true,
-        nvimtree = true,
-        telescope = true,
-        notify = false,
-        mini = false,
-        -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
-    },
+  },
+  palettes = {},
+  specs = {},
+  groups = {},
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
