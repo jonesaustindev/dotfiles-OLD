@@ -110,6 +110,8 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- Set highlight on search
 vim.o.hlsearch = true
@@ -272,14 +274,14 @@ require('gitsigns').setup {
     -- Git Actions
     map({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>')
     map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>')
-    map('n', '<leader>hS', gs.stage_buffer)
-    map('n', '<leader>hu', gs.undo_stage_hunk)
-    map('n', '<leader>hR', gs.reset_buffer)
-    map('n', '<leader>hp', gs.preview_hunk)
-    map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+    map('n', '<leader>gS', gs.stage_buffer)
+    map('n', '<leader>gu', gs.undo_stage_hunk)
+    map('n', '<leader>gR', gs.reset_buffer)
+    map('n', '<leader>gp', gs.preview_hunk)
+    map('n', '<leader>gb', function() gs.blame_line{full=true} end)
     map('n', '<leader>tb', gs.toggle_current_line_blame)
-    map('n', '<leader>hd', gs.diffthis)
-    map('n', '<leader>hD', function() gs.diffthis('~') end)
+    map('n', '<leader>gd', gs.diffthis)
+    map('n', '<leader>gD', function() gs.diffthis('~') end)
     map('n', '<leader>td', gs.toggle_deleted)
 
     -- Text object
@@ -319,6 +321,7 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>su', require('telescope.builtin').git_status, { desc = "[S]earch by [U]nstaged work" })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -388,6 +391,27 @@ require('nvim-treesitter.configs').setup {
     },
   },
 }
+
+-- NvimTree setup
+require("nvim-tree").setup({
+  sort_by = "case_sensitive",
+  view = {
+    adaptive_size = true,
+    mappings = {
+      list = {
+        { key = "u", action = "dir_up" },
+      },
+    },
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = false,
+  },
+})
+
+vim.keymap.set('n', '<leader>tt', "<cmd>NvimTreeToggle<cr>")
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
