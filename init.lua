@@ -541,15 +541,15 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+    -- ['<Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_next_item()
+    --   elseif luasnip.expand_or_jumpable() then
+    --     luasnip.expand_or_jump()
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
@@ -609,6 +609,15 @@ null_ls.setup({
 require("nvim-autopairs").setup {}
 
 -- Github Copilot setup
+vim.keymap.set("i", "<tab>", function()
+    require("copilot.suggestion").accept()
+    -- Put cursor on next line.
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-i>", true, false, true), "n", false)
+end, {
+  desc = "[copilot] accept suggestion",
+  silent = true,
+})
+
 require('copilot').setup({
   panel = {
     enabled = true,
@@ -625,14 +634,17 @@ require('copilot').setup({
     enabled = true,
     auto_trigger = true,
     debounce = 75,
-    keymap = {
-      accept = "<C-i>",
-      accept_word = false,
-      accept_line = false,
-      next = "<M-]>",
-      prev = "<M-[>",
-      dismiss = "<C-]>",
-    },
+    keymap =  {
+      accept = false
+    }
+    -- keymap = {
+    --   accept = "<C-i>",
+    --   accept_word = false,
+    --   accept_line = false,
+    --   next = "<M-]>",
+    --   prev = "<M-[>",
+    --   dismiss = "<C-]>",
+    -- },
   },
   filetypes = {
     yaml = false,
