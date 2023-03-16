@@ -344,7 +344,7 @@ else
       map('n', '<leader>gu', gs.undo_stage_hunk)
       map('n', '<leader>gR', gs.reset_buffer)
       map('n', '<leader>gp', gs.preview_hunk)
-      map('n', '<leader>gb', function() gs.blame_line{full=true} end)
+      map('n', '<leader>gl', function() gs.blame_line{full=true} end)
       map('n', '<leader>tb', gs.toggle_current_line_blame)
       map('n', '<leader>gd', gs.diffthis)
       map('n', '<leader>gD', function() gs.diffthis('~') end)
@@ -546,12 +546,12 @@ else
     -- rust_analyzer = {},
     -- tsserver = {},
 
-    sumneko_lua = {
-      Lua = {
-        workspace = { checkThirdParty = false },
-        telemetry = { enable = false },
-      },
-    },
+    -- sumneko_lua = {
+    --   Lua = {
+    --     workspace = { checkThirdParty = false },
+    --     telemetry = { enable = false },
+    --   },
+    -- },
   }
 
   local mason_null_ls_status, mason_null_ls = pcall(require, 'mason-null-ls')
@@ -611,15 +611,6 @@ else
         behavior = cmp.ConfirmBehavior.Replace,
         select = true,
       },
-      -- ['<Tab>'] = cmp.mapping(function(fallback)
-      --   if cmp.visible() then
-      --     cmp.select_next_item()
-      --   elseif luasnip.expand_or_jumpable() then
-      --     luasnip.expand_or_jump()
-      --   else
-      --     fallback()
-      --   end
-      -- end, { 'i', 's' }),
       ['<S-Tab>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_prev_item()
@@ -652,7 +643,8 @@ else
     sources = {
       formatting.prettier,
       formatting.rustfmt,
-      diagnostics.eslint_d
+      diagnostics.eslint_d,
+      formatting.eslint_d,
     },
     -- configure format on save
     on_attach = function(current_client, bufnr)
@@ -679,15 +671,6 @@ else
   require("nvim-autopairs").setup {}
 
   -- Github Copilot setup
-  vim.keymap.set("i", "<tab>", function()
-      require("copilot.suggestion").accept()
-      -- Put cursor on next line.
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-i>", true, false, true), "n", false)
-  end, {
-    desc = "[copilot] accept suggestion",
-    silent = true,
-  })
-
   require('copilot').setup({
     panel = {
       enabled = true,
@@ -701,20 +684,13 @@ else
       },
     },
     suggestion = {
+      accept = false,
       enabled = true,
       auto_trigger = true,
       debounce = 75,
       keymap =  {
         accept = false
       }
-      -- keymap = {
-      --   accept = "<C-i>",
-      --   accept_word = false,
-      --   accept_line = false,
-      --   next = "<M-]>",
-      --   prev = "<M-[>",
-      --   dismiss = "<C-]>",
-      -- },
     },
     filetypes = {
       yaml = false,
@@ -729,6 +705,16 @@ else
     },
     copilot_node_command = 'node', -- Node.js version must be > 16.x
     server_opts_overrides = {},
+  })
+
+  vim.keymap.set("i", '<Tab>', function()
+    if require("copilot.suggestion").is_visible() then
+      require("copilot.suggestion").accept()
+    else
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
+    end
+  end, {
+    silent = true,
   })
 
   -- Nightfox setup
