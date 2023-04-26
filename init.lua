@@ -45,6 +45,7 @@ if vim.g.vscode then
 
   -- Insert mode
   vim.keymap.set('i', 'jk', '<Esc>')
+  vim.keymap.set('i', 'jj', '<Esc>')
 
   -- Normal mode
   vim.keymap.set('n', '<C-d>', '<C-d>zz')
@@ -88,6 +89,8 @@ else
         'folke/neodev.nvim',
       },
     }
+
+    use 'simrat39/rust-tools.nvim'
 
     use { -- Autocompletion
       'hrsh7th/nvim-cmp',
